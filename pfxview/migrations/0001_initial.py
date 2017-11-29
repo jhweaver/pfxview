@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ('strikes', models.IntegerField()),
                 ('datetime_created', models.DateTimeField(auto_now_add=True)),
                 ('datetime_updated', models.DateTimeField(auto_now=True)),
-                ('atbat', models.ForeignObject(from_fields=[b'atbat_num', b'game_id'], on_delete=django.db.models.deletion.CASCADE, to='pfxview.Atbat', to_fields=[b'num', b'game_id'])),
+                ('atbat', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='pfxview.Atbat')),
             ],
         ),
         migrations.CreateModel(

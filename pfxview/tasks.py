@@ -67,28 +67,16 @@ def process_pitch(pitch_elem, atbat, balls, strikes):
     kwargs['strikes'] = strikes
     kwargs['atbat_num'] = atbat.num
     kwargs['game_id'] = atbat.game.id
+    kwargs['atbat'] = atbat
 
     pitch = Pitch(**kwargs)
     return pitch
 
 
-def process_atbat(atbat_elem, top_bottom, inning, game, defense):
+def process_atbat(atbat_elem, atbat):
     """
-    Create an atbat object from an xml node.
     Call process_pitch for every pitch in that atbat
     """
-    kwargs = atbat_elem.attrib
-    kwargs['inning'] = inning
-    kwargs['top_bottom'] = top_bottom
-    kwargs['game'] = game
-    kwargs['defense'] = defense
-
-    for delete_blank in Atbat.delete_blanks:
-        if delete_blank in kwargs and kwargs[delete_blank] == '':
-            del(kwargs[delete_blank])
-
-    atbat = Atbat(**kwargs)
-
     balls = 0
     strikes = 0
 
@@ -100,11 +88,10 @@ def process_atbat(atbat_elem, top_bottom, inning, game, defense):
             pitches.append(pitch)
             if pitch.pitch_type == 'B':
                 balls += 1
-            else:
-                if strikes < 2:
-                    strikes += 1
+            elif strikes < 2:
+                strikes += 1
 
-    return (atbat, pitches,)
+    return pitches
 
 
 def process_players(player_root_elem):
@@ -249,14 +236,19 @@ def process_game(game_link):
                     top_bottom = 0
                 for atbat_elem in top_bottom_elem:
                     if atbat_elem.tag == 'atbat':
-                        if top_bottom == 1:
-                            (ab, ps) = process_atbat(atbat_elem, top_bottom, inning, game, home_defense)
-                            atbats.append(ab)
-                            pitches.extend(ps)
-                        else:
-                            (ab, ps) = process_atbat(atbat_elem, top_bottom, inning, game, away_defense)
-                            atbats.append(ab)
-                            pitches.extend(ps)
+                        atbat_kwargs = atbat_elem.attrib
+                        atbat_kwargs['inning'] = inning
+                        atbat_kwargs['top_bottom'] = top_bottom
+                        atbat_kwargs['game'] = game
+                        atbat_kwargs['defense'] = home_defense if top_bottom else away_defense
+
+                        for delete_blank in Atbat.delete_blanks:
+                            if delete_blank in atbat_kwargs and atbat_kwargs[delete_blank] == '':
+                                del(atbat_kwargs[delete_blank])
+
+                        atbat = Atbat.objects.create(**atbat_kwargs)
+                        pitch = process_atbat(atbat_elem, atbat)
+                        pitches.extend(pitch)
                     # This is pretty messy, but we don't really have a choice. MLBAM
                     # did a terrible job formatting this. The only way the identified
                     # which player is getting subbed out is by name.
@@ -419,5 +411,4 @@ def process_game(game_link):
                                 new_away_defense.save()
                                 away_defense = new_away_defense
 
-        Atbat.objects.bulk_create(atbats)
         Pitch.objects.bulk_create(pitches)

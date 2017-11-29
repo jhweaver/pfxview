@@ -27,7 +27,7 @@ class Atbat(models.Model):
 
     defense = models.ForeignKey('Defense')
 
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, related_name='atbats', on_delete=models.CASCADE)
 
     inning = models.IntegerField(blank=True, null=True)
     top_bottom = models.IntegerField(blank=True, null=True)
@@ -77,7 +77,7 @@ class Pitch(models.Model):
     atbat_num = models.IntegerField()
     game_id = models.IntegerField()
 
-    atbat = models.ForeignObject(Atbat, models.CASCADE, ['atbat_num', 'game_id'], ['num', 'game_id'])
+    atbat = models.ForeignKey('Atbat', related_name='pitches', on_delete=models.CASCADE)
 
     des = models.CharField(max_length=1028, blank=True, null=True)
     des_es = models.CharField(max_length=1028, blank=True, null=True)
