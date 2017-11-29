@@ -16,7 +16,6 @@ class Command(BaseCommand):
             help='Import games using celery for concurrency'
         )
 
-
     def handle(self, *args, **options):
         start_date = datetime.date(
             int(options['start_date'][0:4]),

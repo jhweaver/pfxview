@@ -42,7 +42,18 @@ INSTALLED_APPS = [
     'users',
 
     'pfxview',
+    'rest_framework',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSIONS_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
+    'COERCE_DECIMAL_TO_STRING': False,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
