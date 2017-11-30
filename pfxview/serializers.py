@@ -10,7 +10,7 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 class PitchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Pitch
-        fields = ('result_type', 'des', 'pitch_type', 'code', 'pfx_x', 'pfx_z', 'sz_top', 'sz_bot', 'external_id')
+        fields = ('result_type', 'des', 'pitch_type', 'code', 'px', 'pz', 'sz_top', 'sz_bot', 'external_id')
 
 class AtbatSerializer(serializers.HyperlinkedModelSerializer):
     pitches = PitchSerializer(many=True, read_only=True)

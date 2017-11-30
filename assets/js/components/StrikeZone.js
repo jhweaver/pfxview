@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
-  const x = (pitch.pfx_x * footToPixel) + (width / 2);
-  const z = (topOfFrame - pitch.pfx_z) * footToPixel;
+  const x = (pitch.px * footToPixel) + (width / 2);
+  const z = (topOfFrame - pitch.pz) * footToPixel;
   ctx.beginPath();
   ctx.lineWidth = size / 3;
 
@@ -28,11 +28,11 @@ function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
     // Circle
     ctx.ellipse(x, z, size, size, 0, 0, 2 * Math.PI);
     ctx.fill();
-  } else if (['B', '*B'].includes((pitch.code))) {
+  } else if (['B', '*B'].includes(pitch.code)) {
     // Square
     ctx.rect(x - size, z - size, size * 2, size * 2);
     ctx.fill();
-  } else if (pitch.code === 'S') {
+  } else if (['S', 'W'].includes(pitch.code)) {
     // Triangle
     ctx.beginPath();
     ctx.moveTo(x - size, z + size);
@@ -56,6 +56,18 @@ function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
     ctx.moveTo(x - size, z - size);
     ctx.lineTo(x + size, z + size);
     ctx.stroke();
+  } else if (['D', 'E'].includes(pitch.code)) {
+    // *
+    ctx.beginPath();
+    ctx.moveTo(x - size, z + size);
+    ctx.lineTo(x + size, z - size);
+    ctx.moveTo(x - size, z - size);
+    ctx.lineTo(x + size, z + size);
+    ctx.moveTo(x - size, z);
+    ctx.lineTo(x + size, z);
+    ctx.moveTo(x, z - size);
+    ctx.lineTo(x, z + size);
+    ctx.stroke();
   }
   ctx.font = '16px Arial';
   ctx.fillStyle = 'black';
@@ -63,13 +75,21 @@ function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
 }
 
 class StrikeZone extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { pitches: this.props.pitches };
+  }
 
   componentDidMount() {
     this.updateCanvas();
   }
 
-
   updateCanvas() {
+    // eslint-disable-next-line react/no-string-refs
+    if (typeof this.refs.canvas === 'undefined') {
+      return;
+    }
+
     // eslint-disable-next-line react/no-string-refs
     const ctx = this.refs.canvas.getContext('2d');
     const width = this.props.width;
@@ -78,13 +98,16 @@ class StrikeZone extends React.Component {
     const plateWidth = 1.42;
     const footToPixel = width / widthInFeet;
     const topOfFrame = 3.75;
-    const topOfZone = this.props.pitches[0].sz_top;
-    const bottomOfZone = this.props.pitches[0].sz_bot;
+    const topOfZone = this.props.pitches.length > 0 ? this.props.pitches[0].sz_top : 3.5;
+    const bottomOfZone = this.props.pitches.length > 0 ? this.props.pitches[0].sz_bot : 1.2;
     const zoneHeight = topOfZone - bottomOfZone;
     const baseballRadius = 0.12;
     const baseballRadiusPixels = baseballRadius * footToPixel;
 
     // Draw the zone
+    ctx.clearRect(0, 0, this.props.width, this.props.height);
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.rect(1, 1, width - 1, height - 1);
     ctx.stroke();
@@ -103,8 +126,8 @@ class StrikeZone extends React.Component {
     });
   }
 
-
   render() {
+    this.updateCanvas();
     return (
       // eslint-disable-next-line react/no-string-refs
       <canvas ref="canvas" width={this.props.width} height={this.props.height} />
@@ -117,8 +140,8 @@ StrikeZone.propTypes = {
   height: PropTypes.number.isRequired,
   pitches: PropTypes.arrayOf(
     PropTypes.shape({
-      pfx_x: PropTypes.number,
-      pfx_z: PropTypes.number,
+      px: PropTypes.number,
+      pz: PropTypes.number,
       sz_top: PropTypes.number,
       sz_bot: PropTypes.number,
       pitch_type: PropTypes.string,
