@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from pfxview.models import Atbat, Game, Pitch
 from pfxview.serializers import AtbatSerializer, GameSerializer, PitchSerializer
@@ -17,8 +17,9 @@ class AtbatView(ListAPIView):
         game_id = int(self.kwargs['game_id'])
         return Atbat.objects.filter(game__id=game_id).prefetch_related('batter', 'pitcher', 'pitches')
 
-class GameView(ListAPIView):
+class GameView(RetrieveAPIView):
     serializer_class = GameSerializer
+    lookup_field = 'gid'
 
     def get_queryset(self):
         gid = self.kwargs['gid']
