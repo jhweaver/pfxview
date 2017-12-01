@@ -4,7 +4,7 @@ This is a reeeeeally small webapp that showcases some of Django's backend capabi
 
 There is an example hosted [here](https://www.harperweaver.com) that serves one game and is viewable per half inning. It's also pictured below.
 
-![pictured](http://harperweaver.com/static/preview.png =400x400 "Example")
+![pictured](http://harperweaver.com/static/preview.png)
 
 ## Frontend
 
