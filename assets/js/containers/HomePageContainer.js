@@ -1,6 +1,8 @@
 import React from 'react';
 import StrikeZone from 'components/StrikeZone';
 import axios from 'axios';
+import styles from './HomePageContainer.scss';
+import classNames from 'classnames';
 
 function pitchReducer(accumulator, atbat) {
   return accumulator.concat(atbat.pitches);
@@ -17,13 +19,14 @@ export default class HomePageContainer extends React.Component {
       pitches: [],
       atbats: [],
       innings: [],
-      selectedInning: null,
+      selectedInning: 1,
+      selectedTopBottom: 1,
     };
   }
 
   componentDidMount() {
     axios
-      .get('http://localhost:8000/game/gid_2017_08_21_bosmlb_clemlb_1/')
+      .get('/game/gid_2017_08_21_bosmlb_clemlb_1/')
       .then(response => this.setState({
         pitches: response.data.atbats.filter(
             atbat => atbat.inning === this.state.selectedInning,
@@ -37,6 +40,18 @@ export default class HomePageContainer extends React.Component {
       });
   }
 
+  changeTopBottom(e) {
+    const selected = parseInt(e.target.value, 0);
+    this.setState(prevState => ({
+        selectedTopBottom: selected,
+      pitches: this.state.atbats.filter(
+          atbat => atbat.inning === this.state.selectedInning,
+      ).filter(
+          atbat => atbat.top_bottom === selected,
+      ).reduce(pitchReducer, []),
+    }));
+  }
+
   changeInning(e) {
     const selected = parseInt(e.target.value, 0);
     // eslint-disable-next-line no-unused-vars
@@ -44,39 +59,80 @@ export default class HomePageContainer extends React.Component {
       selectedInning: selected,
       pitches: this.state.atbats.filter(
           atbat => atbat.inning === selected,
+      ).filter(
+          atbat => atbat.top_bottom === this.state.selectedTopBottom,
       ).reduce(pitchReducer, []),
     }));
   }
 
   render() {
+    const topBottomMap = {
+      1: 'T',
+      0: 'B',
+    }
     const inningOptions = this.state.innings.map((inning) => {
       const isSelected = this.state.selectedInning === inning;
       const radioId = `inning-choice-${inning}`;
       return (
-        <div key={inning} >
-          <div>
-            <label
-              className={isSelected ? 'selector_selected' : 'selector'}
-              htmlFor={radioId}
-            >
-              <input
-                className="selector"
-                type="radio"
-                name="innings"
-                id={radioId}
-                value={inning}
-                onChange={event => this.changeInning(event)}
-              />
-              {inning}
-            </label>
-          </div>
+        <div key={inning}>
+          <label
+            className={classNames({
+              'selector_wrapper': true,
+              'selected': isSelected,
+            })}
+            htmlFor={radioId}
+          >
+          <input
+            className="selector"
+            type="radio"
+            name="innings"
+            id={radioId}
+            value={inning}
+            onChange={event => this.changeInning(event)}
+          />
+            {inning}
+          </label>
+        </div>
+      );
+    });
+    const topBottomOptions = [1, 0].map((topBottom) => {
+      const isSelected = this.state.selectedTopBottom === topBottom;
+      const radioId = `topbottom-choice-${topBottom}`;
+      return  (
+        <div key={topBottom}>
+          <label
+            className={classNames({
+              'selector_wrapper': true,
+              'selected': isSelected,
+            })}
+            htmlFor={radioId}
+          >
+          <input
+            className="selector"
+            type="radio"
+            name="topBottom"
+            id={radioId}
+            value={topBottom}
+            onChange={event => this.changeTopBottom(event)}
+          />
+            {topBottomMap[topBottom]}
+          </label>
         </div>
       );
     });
     return (
       <div>
-        {inningOptions}
-        <StrikeZone pitches={this.state.pitches} width={300} height={300} />
+        <h2>Inning</h2>
+        <div className="selector_container">
+          {inningOptions}
+        </div>
+        <h2>Top / Bottom</h2>
+        <div className="selector_container">
+          {topBottomOptions}
+        </div>
+        <div className="centered">
+          <StrikeZone pitches={this.state.pitches} width={300} height={300} />
+        </div>
       </div>
     );
   }
