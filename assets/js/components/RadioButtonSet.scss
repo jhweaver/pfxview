@@ -19,9 +19,6 @@
   vertical-align: middle;
   padding: 1.5rem;
 
-  &.--selected {
-    background: #8aafff;
-  }
 }
 
 label.selected {
@@ -32,13 +29,4 @@ label.selected {
   visibility: hidden;
   width: 0;
   height: 0;
-}
-
-.centered {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.padded {
-  padding-top: .5em;
 }

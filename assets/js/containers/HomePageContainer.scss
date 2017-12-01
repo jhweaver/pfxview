@@ -1,39 +1,5 @@
 @import '../../sass/style';
 
-.selector-container {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: stretch;
-  flex-flow: row wrap;
-}
-
-.selector-wrapper {
-  display: block;
-  background: #2d6eff;
-  color: white;
-  width: 75px;
-  height: 75px;
-  border: black solid 1px;
-  font-size: 1rem;
-  text-align: center;
-  vertical-align: middle;
-  padding: 1.5rem;
-
-  &.--selected {
-    background: #8aafff;
-  }
-}
-
-label.selected {
-  background: #8aafff;
-}
-
-.selector {
-  visibility: hidden;
-  width: 0;
-  height: 0;
-}
-
 .centered {
   display: flex;
   justify-content: space-evenly;
