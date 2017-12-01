@@ -1,8 +1,9 @@
 import React from 'react';
 import StrikeZone from 'components/StrikeZone';
+import Legend from 'components/Legend';
 import axios from 'axios';
-import styles from './HomePageContainer.scss';
 import classNames from 'classnames';
+import './HomePageContainer.scss';
 
 function pitchReducer(accumulator, atbat) {
   return accumulator.concat(atbat.pitches);
@@ -42,12 +43,13 @@ export default class HomePageContainer extends React.Component {
 
   changeTopBottom(e) {
     const selected = parseInt(e.target.value, 0);
+    // eslint-disable-next-line no-unused-vars
     this.setState(prevState => ({
-        selectedTopBottom: selected,
+      selectedTopBottom: selected,
       pitches: this.state.atbats.filter(
-          atbat => atbat.inning === this.state.selectedInning,
+        atbat => atbat.inning === this.state.selectedInning,
       ).filter(
-          atbat => atbat.top_bottom === selected,
+        atbat => atbat.top_bottom === selected,
       ).reduce(pitchReducer, []),
     }));
   }
@@ -69,7 +71,7 @@ export default class HomePageContainer extends React.Component {
     const topBottomMap = {
       1: 'T',
       0: 'B',
-    }
+    };
     const inningOptions = this.state.innings.map((inning) => {
       const isSelected = this.state.selectedInning === inning;
       const radioId = `inning-choice-${inning}`;
@@ -77,19 +79,19 @@ export default class HomePageContainer extends React.Component {
         <div key={inning}>
           <label
             className={classNames({
-              'selector_wrapper': true,
-              'selected': isSelected,
+              'selector-wrapper': true,
+              selected: isSelected,
             })}
             htmlFor={radioId}
           >
-          <input
-            className="selector"
-            type="radio"
-            name="innings"
-            id={radioId}
-            value={inning}
-            onChange={event => this.changeInning(event)}
-          />
+            <input
+              className="selector"
+              type="radio"
+              name="innings"
+              id={radioId}
+              value={inning}
+              onChange={event => this.changeInning(event)}
+            />
             {inning}
           </label>
         </div>
@@ -98,23 +100,23 @@ export default class HomePageContainer extends React.Component {
     const topBottomOptions = [1, 0].map((topBottom) => {
       const isSelected = this.state.selectedTopBottom === topBottom;
       const radioId = `topbottom-choice-${topBottom}`;
-      return  (
+      return (
         <div key={topBottom}>
           <label
             className={classNames({
-              'selector_wrapper': true,
-              'selected': isSelected,
+              'selector-wrapper': true,
+              selected: isSelected,
             })}
             htmlFor={radioId}
           >
-          <input
-            className="selector"
-            type="radio"
-            name="topBottom"
-            id={radioId}
-            value={topBottom}
-            onChange={event => this.changeTopBottom(event)}
-          />
+            <input
+              className="selector"
+              type="radio"
+              name="topBottom"
+              id={radioId}
+              value={topBottom}
+              onChange={event => this.changeTopBottom(event)}
+            />
             {topBottomMap[topBottom]}
           </label>
         </div>
@@ -123,15 +125,18 @@ export default class HomePageContainer extends React.Component {
     return (
       <div>
         <h2>Inning</h2>
-        <div className="selector_container">
+        <div className={'selector-container'}>
           {inningOptions}
         </div>
         <h2>Top / Bottom</h2>
-        <div className="selector_container">
+        <div className={'selector-container'}>
           {topBottomOptions}
         </div>
         <div className="centered">
           <StrikeZone pitches={this.state.pitches} width={300} height={300} />
+        </div>
+        <div className="padded">
+          <Legend />
         </div>
       </div>
     );

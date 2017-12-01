@@ -1,0 +1,39 @@
+@import '../../sass/style';
+
+.centered {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.padded {
+  padding-top: .5em;
+}
+
+.red {
+  color: #FF0000;
+}
+
+.green {
+  color: #00FF00;
+}
+
+.blue {
+  color: #0000FF;
+}
+
+.teal {
+  color: #009999;
+}
+
+.tan {
+  color: #999900;
+}
+
+svg {
+ vertical-align: middle; 
+}
+
+.description {
+  font-size: 1em;
+  padding-left: .4em;
+}

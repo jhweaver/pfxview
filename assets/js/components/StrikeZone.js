@@ -1,36 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+function makeStyleString(styleColor, styleGamma) {
+  return `rgba(${styleColor[0]}, ${styleColor[1]}, ${styleColor[2]}, ${styleGamma})`;
+}
+
 function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
   const x = (pitch.px * footToPixel) + (width / 2);
   const z = (topOfFrame - pitch.pz) * footToPixel;
+  let styleColor = [255, 255, 255];
+  let styleGamma = 0.33;
   ctx.beginPath();
   ctx.lineWidth = size / 3;
 
   if (['FT', 'FF', 'FS', 'FC'].includes(pitch.pitch_type)) {
-    ctx.fillStyle = 'rgba(255, 0, 0, 0.33)';
-    ctx.strokeStyle = 'rgba(255, 0, 0, 0.33)';
+    styleColor = [255, 0, 0];
   } else if (pitch.pitch_type === 'SL') {
-    ctx.fillStyle = 'rgba(0, 255, 0, 0.33)';
-    ctx.strokeStyle = 'rgba(0, 255, 0, 0.33)';
+    styleColor = [0, 255, 0];
   } else if (pitch.pitch_type === 'CU') {
-    ctx.fillStyle = 'rgba(0, 0, 255, 0.33)';
-    ctx.strokeStyle = 'rgba(0, 0, 255, 0.33)';
+    styleColor = [0, 0, 255];
   } else if (pitch.pitch_type === 'CH') {
-    ctx.fillStyle = 'rgba(0, 127, 127, 0.33)';
-    ctx.strokeStyle = 'rgba(0, 127, 127, 0.33)';
+    styleColor = [0, 127, 127];
   } else {
-    ctx.fillStyle = 'rgba(127, 127, 0, 0.33)';
-    ctx.strokeStyle = 'rgba(127, 127, 0, 0.33)';
+    styleColor = [127, 127, 0];
   }
 
   if (pitch.code === 'C') {
     // Circle
     ctx.ellipse(x, z, size, size, 0, 0, 2 * Math.PI);
+    ctx.fillStyle = makeStyleString(styleColor, styleGamma);
     ctx.fill();
   } else if (['B', '*B'].includes(pitch.code)) {
     // Square
     ctx.rect(x - size, z - size, size * 2, size * 2);
+    ctx.fillStyle = makeStyleString(styleColor, styleGamma);
     ctx.fill();
   } else if (['S', 'W'].includes(pitch.code)) {
     // Triangle
@@ -39,39 +42,41 @@ function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
     ctx.lineTo(x, z - size);
     ctx.lineTo(x + size, z + size);
     ctx.lineTo(x - size, z + size);
+    ctx.fillStyle = makeStyleString(styleColor, styleGamma);
     ctx.fill();
-  } else if (pitch.code === 'F') {
+  } else if (['F', 'T', 'L'].includes(pitch.code)) {
+    // Diamond
+    ctx.beginPath();
+    ctx.moveTo(x - size, z);
+    ctx.lineTo(x, z - size);
+    ctx.lineTo(x + size, z);
+    ctx.lineTo(x, z + size);
+    ctx.lineTo(x - size, z);
+    ctx.fillStyle = makeStyleString(styleColor, styleGamma);
+    ctx.fill();
+  } else if (pitch.code === 'X') {
     // +
     ctx.beginPath();
     ctx.moveTo(x - size, z);
     ctx.lineTo(x + size, z);
     ctx.moveTo(x, z - size);
     ctx.lineTo(x, z + size);
+    ctx.strokeStyle = makeStyleString(styleColor, styleGamma);
     ctx.stroke();
-  } else if (pitch.code === 'X') {
+  } else if (['D', 'E'].includes(pitch.code)) {
     // X
     ctx.beginPath();
     ctx.moveTo(x - size, z + size);
     ctx.lineTo(x + size, z - size);
     ctx.moveTo(x - size, z - size);
     ctx.lineTo(x + size, z + size);
-    ctx.stroke();
-  } else if (['D', 'E'].includes(pitch.code)) {
-    // *
-    ctx.beginPath();
-    ctx.moveTo(x - size, z + size);
-    ctx.lineTo(x + size, z - size);
-    ctx.moveTo(x - size, z - size);
-    ctx.lineTo(x + size, z + size);
-    ctx.moveTo(x - size, z);
-    ctx.lineTo(x + size, z);
-    ctx.moveTo(x, z - size);
-    ctx.lineTo(x, z + size);
+    styleGamma = 1;
+    ctx.strokeStyle = makeStyleString(styleColor, styleGamma);
     ctx.stroke();
   }
   ctx.font = '16px Arial';
   ctx.fillStyle = 'black';
-  ctx.fillText(pitchNum, x - (size / 2), z + (size / 2));
+  ctx.fillText(pitchNum, x - (size / 3), z + (size / 2));
 }
 
 class StrikeZone extends React.Component {

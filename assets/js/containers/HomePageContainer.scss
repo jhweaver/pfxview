@@ -1,13 +1,13 @@
 @import '../../sass/style';
 
-.selector_container {
+.selector-container {
   display: flex;
   justify-content: space-evenly;
   align-items: stretch;
   flex-flow: row wrap;
 }
 
-.selector_wrapper {
+.selector-wrapper {
   display: block;
   background: #2d6eff;
   color: white;
@@ -39,6 +39,6 @@ label.selected {
   justify-content: space-evenly;
 }
 
-.red {
-  color: #FF0000;
+.padded {
+  padding-top: .5em;
 }
