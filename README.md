@@ -37,7 +37,7 @@ The endpoints themselves are defined in the ```pfxview/views.py``` file , the ro
 
 ### Crawling
 
-The logic for crawling the PITCHf/x data is in the ```pfxview/tasks.py``` file. There are functions for finding links to xml files for games give dates and functions that use those links to gather the data necessary to crawl and store the data. The process_game function is registered as a celery shared task calls to it can be sent to a queue and distributed if necessary.
+The logic for crawling the PITCHf/x data is in the ```pfxview/tasks.py``` file. There are functions for finding links to xml files for games given dates, and functions that use those links to gather the data necessary to crawl and store the data. The process_game function is registered as celery shared task calls which can be sent to a queue and distributed if necessary.
 
 There is a Django management function (```pfxview/management/commands/import_games.py```) command that makes it easy to run these tasks. It takes a start/end date (YYYY-MM-DD) and an optional --parallel parameter. It crawls all of the games during or after the start date (inclusice) and before (not inclusive) the end date. For example, ```python manage.py import_games 2017-04-01 2017-11-01 --parallel``` will crawl and store the 2017 regular season and distribute it using celery.
 
@@ -45,10 +45,9 @@ There is a Django management function (```pfxview/management/commands/import_gam
 
 This app was made using [this](https://github.com/gryevns/django-react-bootstrap) bootstrapping repo. 10/10. Would recommend.
 
-
 ## Install / Run
 
-- Install the pythong packages (probably in a virtualenv) ```pip install -r requirements.txt```
+- Install the python packages (probably in a virtualenv) ```pip install -r requirements.txt```
 - Install the node packages ```npm install```
 - Configure the database (and any other settings you'd like) for Django in the config files in ```pfxview/settings/```
 - To start webpack, run ```npm start``` (hot reloading is already included with the boilerplate config)
