@@ -44,3 +44,12 @@ There is a Django management function (```pfxview/management/commands/import_gam
 ## Boilerplate
 
 This app was made using [this](https://github.com/gryevns/django-react-bootstrap) bootstrapping repo. 10/10. Would recommend.
+
+
+## Install / Run
+
+- Install the pythong packages (probably in a virtualenv) ```pip install -r requirements.txt```
+- Install the node packages ```npm install```
+- Configure the database (and any other settings you'd like) for Django in the config files in ```pfxview/settings/```
+- To start webpack, run ```npm start``` (hot reloading is already included with the boilerplate config)
+- To start the application server, fire up Django with ```python manage.py runserver```
