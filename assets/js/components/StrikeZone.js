@@ -14,7 +14,7 @@ function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum, pi
   ctx.beginPath();
   ctx.lineWidth = size / 3;
 
-  if (['FT', 'FF', 'FS', 'FC'].includes(pitch.pitch_type)) {
+  if (['FT', 'FF', 'FS', 'FC', 'SI'].includes(pitch.pitch_type)) {
     styleColor = [255, 0, 0];
   } else if (pitch.pitch_type === 'SL') {
     styleColor = [0, 255, 0];
@@ -85,11 +85,6 @@ function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum, pi
 }
 
 class StrikeZone extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { pitches: this.props.pitches };
-  }
-
   componentDidMount() {
     this.updateCanvas();
   }
