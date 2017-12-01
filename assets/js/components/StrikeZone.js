@@ -5,8 +5,9 @@ function makeStyleString(styleColor, styleGamma) {
   return `rgba(${styleColor[0]}, ${styleColor[1]}, ${styleColor[2]}, ${styleGamma})`;
 }
 
-function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
-  const x = (pitch.px * footToPixel) + (width / 2);
+function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum, pitcherView) {
+  const pitcherViewAdjust = pitcherView ? -1 : 1;
+  const x = (pitcherViewAdjust * (pitch.px * footToPixel)) + (width / 2);
   const z = (topOfFrame - pitch.pz) * footToPixel;
   let styleColor = [255, 255, 255];
   let styleGamma = 0.33;
@@ -76,7 +77,11 @@ function addPitch(ctx, pitch, size, width, footToPixel, topOfFrame, pitchNum) {
   }
   ctx.font = '16px Arial';
   ctx.fillStyle = 'black';
-  ctx.fillText(pitchNum, x - (size / 3), z + (size / 2));
+  if (pitchNum > 9) {
+    ctx.fillText(pitchNum, x - (size / 1.5), z + (size / 2));
+  } else {
+    ctx.fillText(pitchNum, x - (size / 3), z + (size / 2));
+  }
 }
 
 class StrikeZone extends React.Component {
@@ -127,7 +132,16 @@ class StrikeZone extends React.Component {
 
     // eslint-disable-next-line func-names
     this.props.pitches.forEach((pitch, pitchNum) => {
-      addPitch(ctx, pitch, baseballRadiusPixels, width, footToPixel, topOfFrame, pitchNum + 1);
+      addPitch(
+        ctx,
+        pitch,
+        baseballRadiusPixels,
+        width,
+        footToPixel,
+        topOfFrame,
+        pitchNum + 1,
+        this.props.pitcherView,
+      );
     });
   }
 
@@ -143,6 +157,7 @@ class StrikeZone extends React.Component {
 StrikeZone.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  pitcherView: PropTypes.bool.isRequired,
   pitches: PropTypes.arrayOf(
     PropTypes.shape({
       px: PropTypes.number,

@@ -133,7 +133,7 @@ export default class HomePageContainer extends React.Component {
           {topBottomOptions}
         </div>
         <div className="centered">
-          <StrikeZone pitches={this.state.pitches} width={300} height={300} />
+          <StrikeZone pitches={this.state.pitches} width={300} height={300} pitcherView />
         </div>
         <div className="padded">
           <Legend />
